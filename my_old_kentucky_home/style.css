@@ -1,0 +1,29 @@
+/* Stylesheet for my_old_kentucky_home  index */
+
+body {
+	
+	background-color: turquoise;
+}
+
+h1 {
+	text-align: center;
+}
+
+p {
+	text-align: center;
+}
+#title {
+
+	font-size: 48px
+
+}
+
+video {
+	display: block;
+    margin: auto;
+}
+
+img {
+	display: block;
+	margin: auto;
+}
