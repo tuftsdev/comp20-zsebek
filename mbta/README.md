@@ -6,6 +6,7 @@
    - A map that is centered on South Station
    - A red polyline that connects the stations, split into 3 sections to accomodate for the fork in the red line
    - A separate CSS and Javascript file 
+   - I have added the Orange Line and blue line stations with the appropriate polylines. 
 
 2. I have not directly collaborated or discussed the assignment with anyone, although I have followed the discussions on Piazza and utilized the example code provided through Trunk.
 
