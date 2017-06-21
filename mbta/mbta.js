@@ -142,8 +142,9 @@
 
         google.maps.event.addListener(marker, 'click', function () {
         //  marker = this;
-            var theActualMarker = this;
+
           var request = new XMLHttpRequest();
+           var theActualMarker = this;
           request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
           // MOAR CODE, Actual parsing 
 
@@ -153,8 +154,8 @@
             var result = request.responseText;
             var output = ""; // Maybe info added to this (in this case it was output in jsfiddle)
             mbta_data = JSON.parse(result);
-            var minutes_til_arrival_northbound = [" ", " "];
-            var minutes_til_arrival_southbound = [" ", " "];
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
             console.log(result);
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
@@ -168,29 +169,45 @@
                   console.log("Made it into the loops");
                   console.log(info.Seconds / 60);
 
-                  minutes_til_arrival_southbound[minutes_til_arrival_northbound.length] = info.Seconds; 
+
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+
                   }
                   if (info.StopID == "70080")
                   {
                     console.log("Made it into the second loop!!");
                     console.log(info.Seconds / 60);
-                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds;
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+
                   }
             }
 
             }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
 
-              for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
-              {
-         //       console.log(minutes_til_arrival_southbound[i] / 60 );
-              }
+
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
 
 
             }
+
+          //    infoWindow.setContent(marker.title);
+          //    infoWindow.open(map, marker);
             infoWindow.setContent(this.title);
-            console.log(this);
-            console.log(this.title);
-            infoWindow.open(map, this); 
+          //  console.log(this);
+          //  console.log(this.title);
+            infoWindow.open(map, theActualMarker); 
             // I know now that this code will actually set the infowindow, but after a change happens
             }
           // More code
