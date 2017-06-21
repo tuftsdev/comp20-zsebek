@@ -1,9 +1,8 @@
 /* Your CSS here... */
 
-#messages {
+p {
 		border-style: solid;
 		border-left: 15px;
 		background-color: lightgreen;
 		border-radius: 5px;
-
 }
