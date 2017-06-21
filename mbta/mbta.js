@@ -141,7 +141,8 @@
         var infoWindow = new google.maps.InfoWindow();
 
         google.maps.event.addListener(marker, 'click', function () {
-
+        //  marker = this;
+            var theActualMarker = this;
           var request = new XMLHttpRequest();
           request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
           // MOAR CODE, Actual parsing 
@@ -187,6 +188,8 @@
 
             }
             infoWindow.setContent(this.title);
+            console.log(this);
+            console.log(this.title);
             infoWindow.open(map, this); 
             // I know now that this code will actually set the infowindow, but after a change happens
             }
