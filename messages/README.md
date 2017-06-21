@@ -1,6 +1,6 @@
 README for Messages Lab
 
-1. After the work I've done, I believe that I correctly implemented the messages, displaying them in the correct order with some styling. I used a for loop to append p elements to the <div>, which worked successfully in my local host. I followed the lab instructions, trying the files in browsers compared to the local host, and changing the URL. 
+1. After the work I've done, I believe that I correctly implemented the messages, displaying them in the correct order with some styling. I used a for loop to append p elements to the div, which worked successfully in my local host. I followed the lab instructions, trying the files in browsers compared to the local host, and changing the URL. 
 
 2. I did not directly collaborate with others on this assignment, but followed the Piazza posts and examples / other resources given online. 
 
