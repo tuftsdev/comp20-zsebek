@@ -99,6 +99,45 @@
       // Testing Get My Location Function
       getMyLocation();
               
+      // Locating the trains?
+      var request1 = new XMLHttpRequest();
+      request1.open("GET","https://defense-in-derpth.herokuapp.com/redline.json", true);
+
+      request1.onreadystatechange = function() {
+            if (request1.readyState == 4 && request1.status == 200) {
+
+      var train_data = request1.responseText;
+      train_locations = JSON.parse(train_data);
+        
+      for ( var count = 0; count < train_locations.TripList.Trips.length; count++)
+      {
+        // Not all trips have train... maybe I should use conditional first
+        if ( train_locations.TripList.Trips[count].Position )
+        {
+            var train_lat = train_locations.TripList.Trips[count].Position.Lat;
+            var train_lng = train_locations.TripList.Trips[count].Position.Long;
+            var new_train = new google.maps.LatLng( train_lat, train_lng);
+
+            var marker = new google.maps.Marker({
+            position: new_train ,
+            map: map,
+            });
+             
+        }
+
+        //for ( var trains = 0; trains < train_locations.TripList.Trips[count].Position.length; trains++)
+        //{
+
+        //}
+      }
+
+    }
+  }
+
+      request1.send();
+
+
+
 
         var marker = new google.maps.Marker({
           position: south_station,
@@ -122,7 +161,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -191,7 +230,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -265,7 +304,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -338,7 +377,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -414,7 +453,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -492,7 +531,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -568,7 +607,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -647,7 +686,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -723,7 +762,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -793,7 +832,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -867,7 +906,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -941,7 +980,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -1010,7 +1049,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -1079,7 +1118,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -1151,7 +1190,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -1226,7 +1265,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -1302,7 +1341,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -1376,7 +1415,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -1442,7 +1481,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -1516,7 +1555,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -1587,7 +1626,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
@@ -1660,7 +1699,7 @@
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
-            console.log(result);
+            
 
             for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
             {
