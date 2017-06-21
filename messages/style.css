@@ -1,1 +1,9 @@
 /* Your CSS here... */
+
+#messages {
+		border-style: solid;
+		border-left: 15px;
+		background-color: lightgreen;
+		border-radius: 5px;
+
+}
