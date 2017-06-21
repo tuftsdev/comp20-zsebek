@@ -89,60 +89,27 @@
 					
 
 
-       				 // The actual initialization of the map
-               // May have to work around this to actually get it to center ony my location
-        			 map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
+       	// The actual initialization of the map
+        // May have to work around this to actually get it to center ony my location
+        map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
 
 
               
  
-              // Testing Get My Location Function
-              getMyLocation();
+      // Testing Get My Location Function
+      getMyLocation();
               
-
-
-
-
-        // JSON request
-//            var request = new XMLHttpRequest();
-//         request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
-
-
-//         request.onreadystatechange = function() {
-//        if (request.readyState == 4 && request.status == 200) {
-//        message = request.responseText;
-//        obj = JSON.parse(message);
-
-        // Maybe make an array of arrays??? To hold the train info for inbound and maybe one for outbound?
-        // For loop through the train routes!!
-        //  70061  <-> 70104
-       /* for (i = 70061; i < 70104; i++)
-        {
-          console.log(obj.Stop);
-          if (obj.StopID == i )
-          {
-
-          times_for_stops[i].push(obj.Seconds / 60);  
-          }
-        }
-      }
-    };
-        console.log("Helloooo");
-        request.send(null);
-        */
 
         var marker = new google.maps.Marker({
           position: south_station,
           icon: iconBase + 'rail.png',
           map: map,
-          title: "Schedule of Trains to Ashmont: "
-        });
+          });
 
         var infoWindow = new google.maps.InfoWindow();
 
         google.maps.event.addListener(marker, 'click', function () {
-        //  marker = this;
-
+       
           var request = new XMLHttpRequest();
            var theActualMarker = this;
           request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
@@ -152,7 +119,6 @@
           request.onreadystatechange = function() {
             if (request.readyState == 4 && request.status == 200) {
             var result = request.responseText;
-            var output = ""; // Maybe info added to this (in this case it was output in jsfiddle)
             mbta_data = JSON.parse(result);
             var minutes_til_arrival_northbound = [ ];
             var minutes_til_arrival_southbound = [ ];
@@ -166,19 +132,11 @@
                 //process here
                   if ( info.StopID == "70079")
                   {
-                  console.log("Made it into the loops");
-                  console.log(info.Seconds / 60);
-
-
                   minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
-
                   }
                   if (info.StopID == "70080")
                   {
-                    console.log("Made it into the second loop!!");
-                    console.log(info.Seconds / 60);
                     minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
-
                   }
             }
 
@@ -188,8 +146,6 @@
               minutes_til_arrival_southbound.sort(function(a, b){return a-b});
               minutes_til_arrival_northbound.sort(function(a, b){return a-b});
               
-
-
               this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
                + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
                "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
@@ -198,21 +154,11 @@
               //{
               // return minutes_til_arrival_southbound + "</br>"
               //}
-
-
             }
 
-          //    infoWindow.setContent(marker.title);
-          //    infoWindow.open(map, marker);
             infoWindow.setContent(this.title);
-          //  console.log(this);
-          //  console.log(this.title);
             infoWindow.open(map, theActualMarker); 
-            // I know now that this code will actually set the infowindow, but after a change happens
             }
-          // More code
-          // infoWindow.setContent(this.content);
-          //  infoWindow.open(map, this);
           
           request.send();
 
@@ -229,11 +175,145 @@
           map: map
         });
 
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70083")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70084")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
+
+
+
         var marker = new google.maps.Marker({
           position: porter_square,
           icon: iconBase + 'rail.png',
           map: map
         });
+
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70065")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70066")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
+
 
         var marker = new google.maps.Marker({
           position: harvard_square,
@@ -241,11 +321,152 @@
           map: map
         });
 
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70067")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70068")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
+
+
+
+
+
         var marker = new google.maps.Marker({
           position: jfk_umass,
           icon: iconBase + 'rail.png',
           map: map
         });
+
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70085")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70096")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
+
+
+
+
+
 
         var marker = new google.maps.Marker({
           position: savin_hill,
@@ -253,11 +474,155 @@
           map: map
         });
 
+
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70087")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70088")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
+
+
+
+
+
         var marker = new google.maps.Marker({
           position: park_street,
           icon: iconBase + 'rail.png',
           map: map
         });
+
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70075")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70076")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         var marker = new google.maps.Marker({
           position: broadway,
@@ -265,11 +630,145 @@
           map: map
         });
 
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70081")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70082")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
+
+
+
+
+
         var marker = new google.maps.Marker({
           position: north_quincy,
           icon: iconBase + 'rail.png',
           map: map
         });
+
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70097")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70098")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
 
         var marker = new google.maps.Marker({
           position: shawmut,
@@ -277,11 +776,147 @@
           map: map
         });
 
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70091")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70092")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
+
+
+
         var marker = new google.maps.Marker({
           position: davis,
           icon: iconBase + 'rail.png',
           map: map
         });
+
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70063")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70064")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
+
+
 
         var marker = new google.maps.Marker({
           position: alewife,
@@ -289,11 +924,137 @@
           map: map
         });
 
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70061")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70068")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
         var marker = new google.maps.Marker({
           position: kendall_mit,
           icon: iconBase + 'rail.png',
           map: map
         });
+
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70071")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70072")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
 
         var marker = new google.maps.Marker({
           position: charles_mgh,
@@ -301,11 +1062,145 @@
           map: map
         });
 
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70073")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70074")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
+
         var marker = new google.maps.Marker({
           position: downtown_crossing,
           icon: iconBase + 'rail.png',
           map: map
         });
+
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70077")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70078")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
+
+
 
         var marker = new google.maps.Marker({
           position: quincy_center,
@@ -313,11 +1208,150 @@
           map: map
         });
 
+
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70101")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70102")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
+
+
+
+
+
         var marker = new google.maps.Marker({
           position: quincy_adams,
           icon: iconBase + 'rail.png',
           map: map
         });
+
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70103")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70104")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
+
+
 
         var marker = new google.maps.Marker({
           position: ashmont,
@@ -325,11 +1359,138 @@
           map: map
         });
 
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  
+                  if (info.StopID == "70094")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
         var marker = new google.maps.Marker({
           position: wollaston,
           icon: iconBase + 'rail.png',
           map: map
         });
+
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70099")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70100")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
+
 
         var marker = new google.maps.Marker({
           position: fields_corner,
@@ -337,18 +1498,213 @@
           map: map
 
         });
+
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70089")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70090")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
         var marker = new google.maps.Marker({
           position: central_square,
           icon: iconBase + 'rail.png',
           map: map
 
         });
+
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70069")
+                  {
+                  minutes_til_arrival_southbound[minutes_til_arrival_southbound.length] = info.Seconds / 60; 
+                  }
+                  if (info.StopID == "70070")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Ashmont/Braintree: </br>" + minutes_til_arrival_southbound[0]
+               + " min </br>" + minutes_til_arrival_southbound[1] + " min </br>" + minutes_til_arrival_southbound[2] + " min </br>" +
+               "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
+
         var marker = new google.maps.Marker({
           position: braintree,
           icon: iconBase + 'rail.png',
           map: map,
           title: "Trains towards Ashmont: "
         });
+
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(marker, 'click', function () {
+       
+          var request = new XMLHttpRequest();
+           var theActualMarker = this;
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [ ];
+            var minutes_til_arrival_southbound = [ ];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  
+                  if (info.StopID == "70105")
+                  {
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds / 60;
+                  }
+            }
+
+            }
+              // Sort the arrays here (it works)
+              
+              minutes_til_arrival_southbound.sort(function(a, b){return a-b});
+              minutes_til_arrival_northbound.sort(function(a, b){return a-b});
+              
+              this.title = "Trains to Alewife: </br>" + minutes_til_arrival_northbound[0] + " min </br>" + minutes_til_arrival_northbound[1] + " min </br>"
+               + minutes_til_arrival_northbound[2] + " min </br>";
+              //for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              //{
+              // return minutes_til_arrival_southbound + "</br>"
+              //}
+            }
+
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, theActualMarker); 
+            }
+          
+          request.send();
+
+          }); // for add listener
+
+
+
+
+
+
+
+
+
 
         // First Line Segment: Alewife -> Davis -> Porter ->
         // harvard -> central -> kendall -> Charles/mgh ->
@@ -745,6 +2101,9 @@
 
 
 
+
+
+
       function getMyLocation() {
         if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
           navigator.geolocation.getCurrentPosition(function(position) {
@@ -993,10 +2352,8 @@
               // Changing closest station coordinates to numbers
               var closest_lat = closest_station_coords.lat();
               var closest_lng = closest_station_coords.lng();
-              console.log("Closest Lat and Long");
-              console.log(closest_lat);
-              console.log(closest_lng);
-                      // Test polyline to me marker
+              
+            // Test polyline to me marker
             var me_to_closest_mbta = [
               { lat: myLat, lng: myLng},
               // myLat and myLng still seem to point to 0 now
