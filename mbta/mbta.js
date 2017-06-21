@@ -12,6 +12,18 @@
             };
 
 
+            // creates the link since it can't easily be typed
+            // in Javascript without the double slash creating 
+            // a comment. 
+            var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
+
+            // array for minutes (after dividing the seconds) till arrival for the trains. 
+            var times;
+            var minutes_til_arrival ;
+
+
+            
+
             // MBTA Red Line Stations
             var south_station = new google.maps.LatLng( 42.352271, -71.05524200000001);
               var andrew = new google.maps.LatLng( 42.330154, -71.057655);
@@ -88,102 +100,103 @@
               getMyLocation();
               
 
-/* commenting out this navigator geolocation part
-          if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
-          navigator.geolocation.getCurrentPosition(function(position) {
- 
-              var myLat = position.coords.latitude;
-              var myLng = position.coords.longitude;
-              console.log("Values Changed?"); 
-              console.log(myLat);
-              console.log(myLng);
-              me = new google.maps.LatLng(myLat, myLng);
-        
-        var marker_for_me = new google.maps.Marker({
-          position: me,
-          map: map,
-          title: "Your location!!!"
-        });
-
-        marker_for_me.setMap(map);
-
-        // Maybe this infoWindow doesn't show up properly... Will have to fix later
-        // This is a global info window...
-        var infowindow_for_me = new google.maps.InfoWindow();
-        
-        // Open info window on click of marker
-        google.maps.event.addListener(marker_for_me, 'click', function() {
-          infowindow.setContent(marker_for_me.title);
-          infowindow.open(map, marker_for_me);
-        });
-
-        // Calculate distances to all stations here?
- //       var me_to_south_station = google.maps.geometry.spherical.computeDistanceBetween(andrew, south_station);
- //       console.log(me_to_south_station);
 
 
 
+        // JSON request
+//            var request = new XMLHttpRequest();
+//         request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
 
 
-        // Test polyline to me marker
-        var me_to_closest_mbta = [
-         { lat: myLat, lng: myLng},
-         // myLat and myLng still seem to point to 0 now
-         // Seems to be a matter of scope
-         // Random one at first
-         { lat: 42.4071633648, lng: -70.992193222}
+//         request.onreadystatechange = function() {
+//        if (request.readyState == 4 && request.status == 200) {
+//        message = request.responseText;
+//        obj = JSON.parse(message);
 
-         
+        // Maybe make an array of arrays??? To hold the train info for inbound and maybe one for outbound?
+        // For loop through the train routes!!
+        //  70061  <-> 70104
+       /* for (i = 70061; i < 70104; i++)
+        {
+          console.log(obj.Stop);
+          if (obj.StopID == i )
+          {
 
-
-        ];
-        var me_to_mbta = new google.maps.Polyline({
-          path: me_to_closest_mbta,
-          geodesic: true,
-          strokeColor: '#0000FF',
-          strokeOpacity: 1.0,
-          strokeWeight: 3
-        });
-
-        me_to_mbta.setMap(map);
-
-
-
-
-        // for navigator geolocation function..
-            });
-
-
-
-        // brace for navigator geolocation below  
-    }
-*/
-
-      // These values are still 0... Will have to rework the order of things / functions to get this right :( 
-      // Perhaps make the navigator part a different function to begin with...
-
-
-
-
-
-        // creates the link since it can't easily be typed
-        // in Javascript without the double slash creating 
-        // a comment. 
-        var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
+          times_for_stops[i].push(obj.Seconds / 60);  
+          }
+        }
+      }
+    };
+        console.log("Helloooo");
+        request.send(null);
+        */
 
         var marker = new google.maps.Marker({
           position: south_station,
           icon: iconBase + 'rail.png',
-          map: map
+          map: map,
+          title: "Schedule of Trains to Ashmont: "
         });
 
-        marker.content = "South Station!!!! ";
-
         var infoWindow = new google.maps.InfoWindow();
+
         google.maps.event.addListener(marker, 'click', function () {
-                                infoWindow.setContent(this.content);
-                                infoWindow.open(this.getMap(), this);
-                            });
+
+          var request = new XMLHttpRequest();
+          request.open("GET", "https://defense-in-derpth.herokuapp.com/redline.json", true);
+          // MOAR CODE, Actual parsing 
+
+
+          request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+            var result = request.responseText;
+            var output = ""; // Maybe info added to this (in this case it was output in jsfiddle)
+            mbta_data = JSON.parse(result);
+            var minutes_til_arrival_northbound = [" ", " "];
+            var minutes_til_arrival_southbound = [" ", " "];
+            console.log(result);
+
+            for(var count = 0; count < mbta_data.TripList.Trips.length; count++)
+            {
+                for(var stops= 0; stops < mbta_data.TripList.Trips[count].Predictions.length; stops++)
+                {
+                  var info = mbta_data.TripList.Trips[count].Predictions[stops];
+                //process here
+                  if ( info.StopID == "70079")
+                  {
+                  console.log("Made it into the loops");
+                  console.log(info.Seconds / 60);
+
+                  minutes_til_arrival_southbound[minutes_til_arrival_northbound.length] = info.Seconds; 
+                  }
+                  if (info.StopID == "70080")
+                  {
+                    console.log("Made it into the second loop!!");
+                    console.log(info.Seconds / 60);
+                    minutes_til_arrival_northbound[minutes_til_arrival_northbound.length] = info.Seconds;
+                  }
+            }
+
+            }
+
+              for (var i = 0; i < minutes_til_arrival_southbound.length; i++)
+              {
+         //       console.log(minutes_til_arrival_southbound[i] / 60 );
+              }
+
+
+            }
+            infoWindow.setContent(this.title);
+            infoWindow.open(map, this); 
+            // I know now that this code will actually set the infowindow, but after a change happens
+            }
+          // More code
+          // infoWindow.setContent(this.content);
+          //  infoWindow.open(map, this);
+          
+          request.send();
+
+          }); // for add listener
 
 
 
@@ -313,7 +326,8 @@
         var marker = new google.maps.Marker({
           position: braintree,
           icon: iconBase + 'rail.png',
-          map: map
+          map: map,
+          title: "Trains towards Ashmont: "
         });
 
         // First Line Segment: Alewife -> Davis -> Porter ->
